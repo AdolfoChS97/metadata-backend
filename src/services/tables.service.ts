@@ -1,15 +1,19 @@
+import snowflakeCreateConnection from "../utils/database/snowflakeConnection"
 import { getTablesMapper } from "../utils/mappers/tables.mapper"
-import snowflake from "../utils/database/snowflakeConnection"
 import { SnowFlakeQueryResult } from "@/types/snowflake.dt"
 import errorHandler from "../utils/handlers/error.handler"
 import { getTablesResponse } from "@/types/tables.dt"
 
-
-
 async function getTables(number: number | null = 1 ): Promise<getTablesResponse> {
     try {
-        const getTables: Promise<getTablesResponse> = new Promise((resolve, reject) => {
-            snowflake.connect((errConn, conn) => {
+        const getTables: Promise<getTablesResponse> = new Promise(async (resolve, reject) => {
+            const snowflakeConn = await snowflakeCreateConnection(
+                process.env.SNOWFLAKE_ACCOUNT as string,
+                process.env.SNOWFLAKE_USER as string,
+                process.env.SNOWFLAKE_PASSWORD as string,
+                process.env.SNOWFLAKE_WAREHOUSE as string
+            )
+            snowflakeConn.connect((errConn, conn) => {
                 if(errConn) {
                     reject(errConn)
                     return
@@ -29,13 +33,13 @@ async function getTables(number: number | null = 1 ): Promise<getTablesResponse>
                     }
                 })
             })
+
+            snowflakeConn.destroy((err, conn) => console.log('Connection destroyed.'))
         })
         return await getTables
     } catch (e) {
         const err = errorHandler(e)
         throw err
-    } finally {
-        snowflake.destroy((err, conn) => console.log('Connection destroyed.'))
     }
 }
 

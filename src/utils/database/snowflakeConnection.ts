@@ -1,14 +1,12 @@
 import * as snowflake from 'snowflake-sdk'
-import * as dotenv from 'dotenv'
-import getEnvVariable from '../getEnvVariables'
 
-dotenv.config()
+async function snowflakeCreateConnection(account: string, username: string, password: string, warehouse: string): Promise<snowflake.Connection> {
+    return snowflake.createConnection({
+        account: account,
+        username: username,
+        password: password,
+        warehouse: warehouse,
+    })
+}
 
-const snowFlakeConnection = snowflake.createConnection({
-    account: getEnvVariable('SNOWFLAKE_ACCOUNT'),
-    username: getEnvVariable('SNOWFLAKE_USER'),
-    password: getEnvVariable('SNOWFLAKE_PASSWORD'),
-    warehouse: getEnvVariable('SNOWFLAKE_WAREHOUSE'),
-})
-
-export default snowFlakeConnection
+export default snowflakeCreateConnection
