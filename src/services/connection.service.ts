@@ -1,8 +1,8 @@
-import { Connection } from "@/types/connection.dt"
+import { Connection, TestConnectionResponse } from "@/types/connection.dt"
 import errorHandler from "../utils/handlers/error.handler"
 import snowflakeCreateConnection from "../utils/database/snowflakeConnection"
 
-async function testConnectionService({ accountName, user, password, warehouseName }: Connection): Promise<any> {
+async function testConnectionService({ accountName, user, password, warehouseName }: Connection): Promise<TestConnectionResponse> {
     try {
         const snowflake = await snowflakeCreateConnection(accountName, user, password, warehouseName)
         const testConnection: Promise<any> = new Promise((resolve, reject) => {
